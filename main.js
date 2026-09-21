@@ -2,8 +2,17 @@ console.log("setup ok")
 
 const gameBoard = (() => {
   let board = new Array(9).fill("");
+
+  const placeMark = (mark, index) => {
+    if(board[index] === ""){
+      board[index] = mark;
+      return true;
+    }else {
+      return false;
+    }
+  }
   const getGameBoard = () => board;
-  return {getGameBoard};
+  return {getGameBoard, placeMark};
 })();
 
 function createPlayer(name, mark) {
