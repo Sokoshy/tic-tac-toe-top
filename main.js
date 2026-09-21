@@ -24,6 +24,7 @@ const p2 = createPlayer("marc", "O");
 
 const gameController = (() => {
   let lastTurn = "";
+  let turn = 0;
 
   const lastPlayed = () => lastTurn; 
 
@@ -33,6 +34,16 @@ const gameController = (() => {
         return "The case is not empty";
       }else{
         lastTurn = player.name;
+        turn++;
+        if(turn >= 5) {
+          const win = checkWin();
+          if(win !== null){
+            return win;
+          }
+          if( turn === 9 && win === null){
+            return "Tie";
+          }
+        }
         return "The placement is correct";
       }
     }else {
@@ -40,7 +51,19 @@ const gameController = (() => {
     }
   }
 
-  return {lastPlayed, actualTurn}
+  const checkWin = () => {
+    const board = gameBoard.getGameBoard();
+    const winCombo = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+    
+    for (const [a, b, c] of winCombo) {
+      if(board[a] !== "" && board[a] === board[b] && board[a] === board[c]){
+        return board[a];
+      }
+    }
+    return null;
+  }
+
+  return {lastPlayed, actualTurn, checkWin}
 })();
 
 console.log(p1.mark, p2.mark);
