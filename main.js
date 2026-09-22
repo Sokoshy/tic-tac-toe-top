@@ -73,14 +73,21 @@ const displayController = (() => {
     displayDiv.textContent = "";
     
     const board = gameBoard.getGameBoard();
-    
-    for(const square of board) {
+    board.forEach((square, index) => {
       const newDiv = document.createElement("div");
       newDiv.classList.add("square");
       newDiv.textContent = square;
+      newDiv.dataset.index = index;
+
+      newDiv.addEventListener("click", (e) => {
+        const n = Number(e.currentTarget.dataset.index);
+        const joueur = gameController.lastPlayed() === p1.name ? p2 : p1;
+        gameController.actualTurn(n, joueur);
+        displayController.render();
+      });
 
       displayDiv.append(newDiv);
-    }
+    })
   }
    return {render};
 })();
