@@ -11,8 +11,14 @@ const gameBoard = (() => {
       return false;
     }
   }
+  
   const getGameBoard = () => board;
-  return {getGameBoard, placeMark};
+  
+  const resetBoard = () => {
+    board = new Array(9).fill("");
+  }
+
+  return {getGameBoard, placeMark, resetBoard};
 })();
 
 function createPlayer(name, mark) {
@@ -27,6 +33,11 @@ const gameController = (() => {
   let turn = 0;
 
   const lastPlayed = () => lastTurn; 
+
+  const resetGame = () => {
+    lastTurn = "";
+    turn = 0;
+  }
 
   const actualTurn= (index, player) => {
     if(lastTurn !== player.name) {
@@ -63,11 +74,14 @@ const gameController = (() => {
     return null;
   }
 
-  return {lastPlayed, actualTurn, checkWin}
+  return {lastPlayed, actualTurn, checkWin, resetGame}
 })();
 
 const displayController = (() => {
   const displayDiv = document.querySelector(".container");
+  const messageDiv = document.querySelector(".message");
+  const restartBtn = document.querySelector(".restart");
+  let gameOver = false;
   
   const render = () => {
     displayDiv.textContent = "";
@@ -80,16 +94,35 @@ const displayController = (() => {
       newDiv.dataset.index = index;
 
       newDiv.addEventListener("click", (e) => {
+        if (gameOver) return;
         const n = Number(e.currentTarget.dataset.index);
-        const joueur = gameController.lastPlayed() === p1.name ? p2 : p1;
-        gameController.actualTurn(n, joueur);
+        const player = gameController.lastPlayed() === p1.name ? p2 : p1;
+        const result = gameController.actualTurn(n, player);
+         if (result === p1.mark || result === p2.mark) {
+          messageDiv.textContent = player.name;
+        } else {
+          messageDiv.textContent = result;
+        }
+        if (result === p1.mark || result === p2.mark || result === "Tie") {
+          gameOver = true;
+        }
         displayController.render();
       });
 
       displayDiv.append(newDiv);
     })
   }
-   return {render};
+
+  const restart = () => {
+    gameBoard.resetBoard();
+    gameController.resetGame();
+    gameOver = false;
+    messageDiv.textContent = "";
+    render();
+  }
+  restartBtn.addEventListener("click", restart);
+
+   return {render, restart};
 })();
 
 console.log(p1.mark, p2.mark);
