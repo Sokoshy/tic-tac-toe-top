@@ -66,5 +66,25 @@ const gameController = (() => {
   return {lastPlayed, actualTurn, checkWin}
 })();
 
+const displayController = (() => {
+  const displayDiv = document.querySelector(".container");
+  
+  const render = () => {
+    displayDiv.textContent = "";
+    
+    const board = gameBoard.getGameBoard();
+    
+    for(const square of board) {
+      const newDiv = document.createElement("div");
+      newDiv.classList.add("square");
+      newDiv.textContent = square;
+
+      displayDiv.append(newDiv);
+    }
+  }
+   return {render};
+})();
+
 console.log(p1.mark, p2.mark);
 console.log(p1.name, p2.name);
+displayController.render();
